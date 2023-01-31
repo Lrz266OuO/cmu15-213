@@ -135,11 +135,6 @@ NOTES:
 
 #endif
 
-/* TODO: 
- *	You are only allowed to use the following eight operators: 
- *	! ~ & ^ | + << >>
- *	You are not allowed to use any constants longer than 8 bits.
- */
 
 //1
 /* 
@@ -170,7 +165,11 @@ int tmin(void) {
  *   Rating: 1
  */
 int isTmax(int x) {
-  return 2;
+/* 只有当 x=-1 || x=Tmax 时, x+1=~x */
+  int a = !((x+1) ^ (~x));
+/* 只有当 x=-1 时, ~x=0 */
+  int b = !(!(~x));
+  return (a & b);
 }
 /* 
  * allOddBits - return 1 if all odd-numbered bits in word set to 1
