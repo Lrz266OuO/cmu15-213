@@ -230,15 +230,20 @@ int conditional(int x, int y, int z) {
   judge = (judge << 16) + judge;
   return (judge & y) | ((~judge) & z);
 }
-/* 
- * isLessOrEqual - if x <= y  then return 1, else return 0 
+/*
+ * isLessOrEqual - if x <= y  then return 1, else return 0
  *   Example: isLessOrEqual(4,5) = 1.
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 24
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  return 2;
+  int sx = !(x >> 31); // x < 0 : 0
+  int sy = !(y >> 31);
+  int ds = sx ^ sy;
+  int xn = ds & !sx;
+  int le = !ds & !((y + (~x+1)) >> 31); // y-x >= 0
+  return xn | le;
 }
 //4
 /* 
