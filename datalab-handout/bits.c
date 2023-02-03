@@ -305,6 +305,28 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {
+  // 符号位，s=0为正数，s=1为负数
+  int sign = (1 << 31) & uf;
+  // 阶码字段
+  int exp = (uf >> 23) & 0xff;
+  // 小数字段
+  int frac = (~(((0xff << 1) | 0x1) << 23)) & uf;
+  // 判断argument是否为NaN
+  if (exp == 0xff) {
+    return uf;
+  }
+  // 判断argument是否是非规格化的
+  else if (exp == 0) {
+    return (frac << 1) | sign;
+  }
+  else {
+    if (exp + 1 == 0xFF) {
+      return 0x7F800000 | sign;
+    }
+    else {
+      return ((exp + 1) << 23) | frac | sign;
+    }
+  }
   return 2;
 }
 /* 
