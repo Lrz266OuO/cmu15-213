@@ -342,6 +342,41 @@ unsigned floatScale2(unsigned uf) {
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {
+  // 符号位，s=0为正数，s=1为负数
+  int sign = (uf >> 31) & 0x1;
+  // 阶码字段
+  int exp = (uf >> 23) & 0xff;
+  int E = exp - 127;
+  // 小数字段
+  int frac = (~(((0xff << 1) | 0x1) << 23)) & uf;
+  // 判断argument是否为NaN，或者超过32位
+  if (E >= 32) {
+    return (1 << 31);
+  }
+  // 判断argument是否过小，即在(0,1)，因为返回值为int，故显示为0
+  else if (E <= -1) {
+    return 0;
+  }
+  // 剩下的都是合法值
+  else {
+    // M = 1.xxxx(frac)
+    int result = (1 << 23) | frac;
+    // 如果 E>=23，左移
+    if (E >= 23) {
+      result = result << (E - 23);
+    }
+    // 如果 E<23,右移
+    else {
+      result = result >> (23 - E);
+    }
+    // 判断正负
+    if (sign) {
+      return -result;
+    }
+    else {
+      return result;
+    }
+  }
   return 2;
 }
 /* 
